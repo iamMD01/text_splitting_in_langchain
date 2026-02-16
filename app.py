@@ -1,13 +1,4 @@
 import streamlit as st
-import base64
-
-def play_sound(sound_file):
-    with open(sound_file, "rb") as f:
-        audio_bytes = f.read()
-    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-    audio_html = f'<audio autoplay="true" style="display:none;"><source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3"></audio>'
-    st.markdown(audio_html, unsafe_allow_html=True)
-
 from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTextSplitter, TokenTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 import tempfile
@@ -50,8 +41,6 @@ if uploaded_file:
         docs = loader.load()
         text_input = "\n".join([doc.page_content for doc in docs])
         st.success("PDF loaded successfully! Content extracted.")
-        if os.path.exists('success.mp3'):
-            play_sound('success.mp3')
     except Exception as e:
         st.error(f"Error reading PDF: {e}")
         text_input = "" # Fallback or keep previous? Better to clear or show empty.
@@ -62,8 +51,6 @@ else:
     text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...", value="LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also: Be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. As such, the LangChain framework is designed with the objective in mind to enable those types of applications.")
 
 if st.button("Process"):
-    if os.path.exists('click.mp3'):
-        play_sound('click.mp3')
     if not text_input:
         st.warning("Please enter some text to process.")
     else:
