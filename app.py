@@ -1,6 +1,6 @@
 import streamlit as st
 import langchain
-from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTextSplitter, TokenTextSplitter
 
 st.set_page_config(page_title="Text Splitter Playground", layout="wide")
 st.title("Text Splitter Visualization")
