@@ -38,3 +38,7 @@ if st.button("Process"):
 
 st.markdown('---')
 st.caption('Text Splitter Playground | Built with Streamlit & LangChain')
+
+
+st.sidebar.markdown('---')
+st.sidebar.caption('Chunk visuals are color-coded to show boundaries.')
