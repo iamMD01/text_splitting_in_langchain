@@ -49,6 +49,8 @@ if uploaded_file:
         docs = loader.load()
         text_input = "\n".join([doc.page_content for doc in docs])
         st.success("PDF loaded successfully! Content extracted.")
+        if os.path.exists('success.mp3'):
+            play_sound('success.mp3')
     except Exception as e:
         st.error(f"Error reading PDF: {e}")
         text_input = "" # Fallback or keep previous? Better to clear or show empty.
