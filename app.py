@@ -192,3 +192,29 @@ st.caption('Text Splitter Playground | Built with Streamlit & LangChain')
 
 st.sidebar.markdown('---')
 st.sidebar.caption('Chunk visuals are color-coded to show boundaries.')
+
+# --- Documentation Tabs ---
+st.sidebar.markdown('---')
+st.sidebar.header("📚 Documentation")
+view_mode = st.sidebar.radio("Choose View:", ["Visualizer (App)", "Text Splitting Concepts", "Project Implementation"])
+
+if view_mode == "Text Splitting Concepts":
+    st.title("Text Splitting Concepts")
+    try:
+        with open("text_splitting_concepts.md", "r") as f:
+            st.markdown(f.read())
+    except FileNotFoundError:
+        st.error("Documentation file not found.")
+
+elif view_mode == "Project Implementation":
+    st.title("Project Implementation & Code")
+    try:
+        with open("project_implementation.md", "r") as f:
+            st.markdown(f.read())
+    except FileNotFoundError:
+        st.error("Documentation file not found.")
+
+else:
+    # --- Existing Visualizer Logic ---
+    st.markdown('---')
+    st.caption('Text Splitter Playground | Built with Streamlit & LangChain')
