@@ -3,6 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTe
 from langchain_community.document_loaders import PyPDFLoader
 import tempfile
 import os
+import html
 
 st.set_page_config(page_title="Text Splitter Playground", layout="wide")
 st.title("Text Splitter Visualization")
@@ -92,45 +93,30 @@ if st.button("Process"):
                         break
             
             # Construct display HTML
-            display_text = chunk
+            # IMPORTANT: Escape HTML to avoid invalid characters or XSS-like issues
             
-            # We need to handle cases where overlap_prev and overlap_next might overlap each other (small chunks)
-            # But for simple visualization, let's assume standard chunking where overlap < chunk_size/2
+            start_len = len(overlap_prev)
+            end_len = len(overlap_next)
             
-            if overlap_next:
-                 # Highlight end
-                 non_overlap_len = len(chunk) - len(overlap_next)
-                 display_text = chunk[:non_overlap_len] + f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{overlap_next}</span>'
-            
-            if overlap_prev:
-                # Highlight start
-                # We need to be careful not to double-replace if we already modified display_text
-                # If we modified end, the start is still intact at index 0
-                soup = display_text # simplistic
+            if start_len + end_len <= len(chunk):
+                part1_text = chunk[:start_len]
+                part2_text = chunk[start_len : len(chunk)-end_len]
+                part3_text = chunk[len(chunk)-end_len:] if end_len > 0 else ""
                 
-                # Re-construct:
-                # Part 1: Overlap Prev
-                # Part 2: Middle (Non-overlap)
-                # Part 3: Overlap Next
+                # HTML template for highlighting
+                highlight_style = 'background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;'
                 
-                start_len = len(overlap_prev)
-                end_len = len(overlap_next)
-                
-                if start_len + end_len > len(chunk):
-                     # Overlaps intersect - fringe case, just highlight everything or handle gracefully
-                     # For now, let's just highlight start and whatever is left of end?
-                     # Simpler: just highlight start, middle, end based on indices
-                     pass 
-                
-                part1 = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{chunk[:start_len]}</span>'
-                part3 = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{chunk[-end_len:]}</span>' if end_len > 0 else ""
-                
-                if start_len + end_len <= len(chunk):
-                    part2 = chunk[start_len : len(chunk)-end_len]
-                    display_text = part1 + part2 + part3
-                else:
-                    # Overlap region implies the whole chunk is basically overlap
-                    display_text = part1 + chunk[start_len:] # simplified fallback
+                display_text = ""
+                if part1_text:
+                    display_text += f'<span style="{highlight_style}">{html.escape(part1_text)}</span>'
+                display_text += html.escape(part2_text)
+                if part3_text:
+                    display_text += f'<span style="{highlight_style}">{html.escape(part3_text)}</span>'
+            else:
+                # Overlap region intersects; fallback to just escaping the whole chunk
+                # or strictly prioritize start highlighting
+                # For simplicity, if complex overlap, just show escaped chunk
+                display_text = html.escape(chunk)
 
             st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{display_text}</div>', unsafe_allow_html=True)
 
