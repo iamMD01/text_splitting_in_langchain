@@ -61,6 +61,8 @@ else:
     text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...", value="LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also: Be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. As such, the LangChain framework is designed with the objective in mind to enable those types of applications.")
 
 if st.button("Process"):
+    if os.path.exists('click.mp3'):
+        play_sound('click.mp3')
     if not text_input:
         st.warning("Please enter some text to process.")
     else:
