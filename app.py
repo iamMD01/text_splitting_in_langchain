@@ -104,6 +104,9 @@ if st.button("Process"):
             
             **Tokens:** Max: {max(token_counts)} | Min: {min(token_counts)} | Avg: {avg_tokens:.2f}
             """)
+            
+            st.subheader("Chunk Length Distribution")
+            st.bar_chart(lengths)
         
         for i, chunk in enumerate(chunks):
             # ... (rest of loop)
