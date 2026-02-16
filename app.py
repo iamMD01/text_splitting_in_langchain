@@ -9,3 +9,6 @@ splitter_type = st.sidebar.selectbox("Splitter Type", ["RecursiveCharacterTextSp
 chunk_size = st.sidebar.slider("Chunk Size", min_value=100, max_value=5000, value=1000, step=50)
 chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=0, max_value=1000, value=200, step=10)
 text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...")
+
+if st.button('Process'):
+    st.write('Processing...')
