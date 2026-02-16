@@ -32,15 +32,22 @@ else:
     splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 
 if uploaded_file:
-    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+    # Use a fixed suffix so PyPDFLoader knows it's a PDF
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
         tmp_file.write(uploaded_file.read())
         tmp_file_path = tmp_file.name
     
-    loader = PyPDFLoader(tmp_file_path)
-    docs = loader.load()
-    text_input = "\n".join([doc.page_content for doc in docs])
-    os.remove(tmp_file_path)
-    st.info("PDF loaded successfully! Content extracted.")
+    try:
+        loader = PyPDFLoader(tmp_file_path)
+        docs = loader.load()
+        text_input = "\n".join([doc.page_content for doc in docs])
+        st.success("PDF loaded successfully! Content extracted.")
+    except Exception as e:
+        st.error(f"Error reading PDF: {e}")
+        text_input = "" # Fallback or keep previous? Better to clear or show empty.
+    finally:
+        if os.path.exists(tmp_file_path):
+            os.remove(tmp_file_path)
 else:
     text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...", value="LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also: Be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. As such, the LangChain framework is designed with the objective in mind to enable those types of applications.")
 
