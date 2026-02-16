@@ -1,3 +1,4 @@
+import streamlit as st
 import base64
 
 def play_sound(sound_file):
