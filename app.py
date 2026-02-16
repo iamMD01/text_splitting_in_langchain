@@ -66,31 +66,71 @@ if st.button("Process"):
         for i, chunk in enumerate(chunks):
             color = colors[i % len(colors)]
             
-            # Detect overlap with previous chunk
-            overlap_text = ""
+            overlap_prev = ""
+            overlap_next = ""
+            
+            # Check overlap with previous chunk (at the start of current chunk)
             if i > 0:
-                # Simple logic: find where the end of prev_chunk matches start of current chunk
-                # This depends on the splitter, but we can try to find the longest common suffix/prefix
                 prev_chunk = chunks[i-1]
-                # We know overlap size is roughly chunk_overlap, so we check the start of this chunk matches end of prev
-                # In practice, exact match might be tricky with separators, but let's try a simple approach
-                # Check increasingly smaller suffixes of prev_chunk set against prefix of chunk
-                min_overlap = 0
-                max_check = len(chunk) # Can't be more than the chunk itself
-                
-                for k in range(max_check, min_overlap, -1):
+                max_check = len(chunk)
+                for k in range(max_check, 0, -1):
                     suffix = prev_chunk[-k:]
                     prefix = chunk[:k]
                     if suffix == prefix:
-                        overlap_text = prefix
+                        overlap_prev = prefix
                         break
             
-            if overlap_text:
-                # Highlight the overlap
-                non_overlap = chunk[len(overlap_text):]
-                display_text = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{overlap_text}</span>{non_overlap}'
-            else:
-                display_text = chunk
+            # Check overlap with next chunk (at the end of current chunk)
+            if i < len(chunks) - 1:
+                next_chunk = chunks[i+1]
+                max_check = len(chunk)
+                for k in range(max_check, 0, -1):
+                    suffix = chunk[-k:]
+                    prefix = next_chunk[:k]
+                    if suffix == prefix:
+                        overlap_next = suffix
+                        break
+            
+            # Construct display HTML
+            display_text = chunk
+            
+            # We need to handle cases where overlap_prev and overlap_next might overlap each other (small chunks)
+            # But for simple visualization, let's assume standard chunking where overlap < chunk_size/2
+            
+            if overlap_next:
+                 # Highlight end
+                 non_overlap_len = len(chunk) - len(overlap_next)
+                 display_text = chunk[:non_overlap_len] + f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{overlap_next}</span>'
+            
+            if overlap_prev:
+                # Highlight start
+                # We need to be careful not to double-replace if we already modified display_text
+                # If we modified end, the start is still intact at index 0
+                soup = display_text # simplistic
+                
+                # Re-construct:
+                # Part 1: Overlap Prev
+                # Part 2: Middle (Non-overlap)
+                # Part 3: Overlap Next
+                
+                start_len = len(overlap_prev)
+                end_len = len(overlap_next)
+                
+                if start_len + end_len > len(chunk):
+                     # Overlaps intersect - fringe case, just highlight everything or handle gracefully
+                     # For now, let's just highlight start and whatever is left of end?
+                     # Simpler: just highlight start, middle, end based on indices
+                     pass 
+                
+                part1 = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{chunk[:start_len]}</span>'
+                part3 = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{chunk[-end_len:]}</span>' if end_len > 0 else ""
+                
+                if start_len + end_len <= len(chunk):
+                    part2 = chunk[start_len : len(chunk)-end_len]
+                    display_text = part1 + part2 + part3
+                else:
+                    # Overlap region implies the whole chunk is basically overlap
+                    display_text = part1 + chunk[start_len:] # simplified fallback
 
             st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{display_text}</div>', unsafe_allow_html=True)
 
