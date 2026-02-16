@@ -93,7 +93,6 @@ if st.button("Process"):
     else:
         chunks = splitter.split_text(text_input)
         st.session_state.chunks = chunks
-        st.write(f"Number of chunks: {len(chunks)}") # Optional: Feedback on click
 
 # Check if we have chunks in session state (either from just clicking or previous run)
 if st.session_state.chunks:
