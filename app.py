@@ -65,7 +65,34 @@ if st.button("Process"):
         
         for i, chunk in enumerate(chunks):
             color = colors[i % len(colors)]
-            st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{chunk}</div>', unsafe_allow_html=True)
+            
+            # Detect overlap with previous chunk
+            overlap_text = ""
+            if i > 0:
+                # Simple logic: find where the end of prev_chunk matches start of current chunk
+                # This depends on the splitter, but we can try to find the longest common suffix/prefix
+                prev_chunk = chunks[i-1]
+                # We know overlap size is roughly chunk_overlap, so we check the start of this chunk matches end of prev
+                # In practice, exact match might be tricky with separators, but let's try a simple approach
+                # Check increasingly smaller suffixes of prev_chunk set against prefix of chunk
+                min_overlap = 0
+                max_check = len(chunk) # Can't be more than the chunk itself
+                
+                for k in range(max_check, min_overlap, -1):
+                    suffix = prev_chunk[-k:]
+                    prefix = chunk[:k]
+                    if suffix == prefix:
+                        overlap_text = prefix
+                        break
+            
+            if overlap_text:
+                # Highlight the overlap
+                non_overlap = chunk[len(overlap_text):]
+                display_text = f'<span style="background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;">{overlap_text}</span>{non_overlap}'
+            else:
+                display_text = chunk
+
+            st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{display_text}</div>', unsafe_allow_html=True)
 
 
 st.markdown('---')
