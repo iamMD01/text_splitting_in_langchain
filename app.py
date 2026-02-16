@@ -1,5 +1,12 @@
-import streamlit as st
-import langchain
+import base64
+
+def play_sound(sound_file):
+    with open(sound_file, "rb") as f:
+        audio_bytes = f.read()
+    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+    audio_html = f'<audio autoplay="true" style="display:none;"><source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3"></audio>'
+    st.markdown(audio_html, unsafe_allow_html=True)
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter, CharacterTextSplitter, TokenTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 import tempfile
