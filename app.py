@@ -79,6 +79,10 @@ if uploaded_file:
 else:
     text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...", value="LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also: Be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. As such, the LangChain framework is designed with the objective in mind to enable those types of applications.")
 
+import tiktoken
+
+# ... (rest of imports)
+
 if st.button("Process"):
     if not text_input:
         st.warning("Please enter some text to process.")
@@ -86,13 +90,23 @@ if st.button("Process"):
         chunks = splitter.split_text(text_input)
         st.write(f"Number of chunks: {len(chunks)}")
         
+        # Calculate Tokens
+        enc = tiktoken.get_encoding("cl100k_base")
+        token_counts = [len(enc.encode(c)) for c in chunks]
+        
         # Stats
         lengths = [len(c) for c in chunks]
         if lengths:
             avg_len = sum(lengths)/len(lengths)
-            st.info(f"Max: {max(lengths)} chars | Min: {min(lengths)} chars | Avg: {avg_len:.2f} chars")
+            avg_tokens = sum(token_counts)/len(token_counts)
+            st.info(f"""
+            **Characters:** Max: {max(lengths)} | Min: {min(lengths)} | Avg: {avg_len:.2f}
+            
+            **Tokens:** Max: {max(token_counts)} | Min: {min(token_counts)} | Avg: {avg_tokens:.2f}
+            """)
         
         for i, chunk in enumerate(chunks):
+            # ... (rest of loop)
             color = colors[i % len(colors)]
             
             overlap_prev = ""
