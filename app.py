@@ -34,3 +34,7 @@ if st.button("Process"):
         for i, chunk in enumerate(chunks):
             color = colors[i % len(colors)]
             st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{chunk}</div>', unsafe_allow_html=True)
+
+
+st.markdown('---')
+st.caption('Text Splitter Playground | Built with Streamlit & LangChain')
