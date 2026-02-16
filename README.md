@@ -6,3 +6,15 @@ A Streamlit application to visualize and compare different text splitting strate
 - Interactive Playground
 - Multiple Splitter Types (Recursive, Character, etc.)
 - Real-time Visualization
+
+## Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+```bash
+streamlit run app.py
+```
