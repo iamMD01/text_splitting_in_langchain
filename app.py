@@ -12,6 +12,9 @@ splitter_type = st.sidebar.selectbox("Splitter Type", ["RecursiveCharacterTextSp
 chunk_size = st.sidebar.slider("Chunk Size", min_value=100, max_value=5000, value=1000, step=50)
 chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=0, max_value=1000, value=200, step=10)
 
+# File Uploader
+uploaded_file = st.sidebar.file_uploader("Upload a PDF", type="pdf")
+
 theme = st.sidebar.selectbox("Theme", ["Light", "Dark", "Neon"])
 
 if theme == "Dark":
@@ -27,7 +30,19 @@ elif splitter_type == "TokenTextSplitter":
     splitter = TokenTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 else:
     splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...")
+
+if uploaded_file:
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+        tmp_file.write(uploaded_file.read())
+        tmp_file_path = tmp_file.name
+    
+    loader = PyPDFLoader(tmp_file_path)
+    docs = loader.load()
+    text_input = "\n".join([doc.page_content for doc in docs])
+    os.remove(tmp_file_path)
+    st.info("PDF loaded successfully! Content extracted.")
+else:
+    text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...", value="LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also: Be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. As such, the LangChain framework is designed with the objective in mind to enable those types of applications.")
 
 if st.button("Process"):
     if not text_input:
