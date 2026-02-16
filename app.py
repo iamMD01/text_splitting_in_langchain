@@ -6,9 +6,37 @@ import os
 import html
 
 st.set_page_config(page_title="Text Splitter Playground", layout="wide")
-st.title("Text Splitter Visualization")
-st.write("Experiment with different text splitting strategies in LangChain.")
+
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    st.title("Text Splitter Visualization")
+    st.write("Experiment with different text splitting strategies in LangChain.")
+
 splitter_type = st.sidebar.selectbox("Splitter Type", ["RecursiveCharacterTextSplitter", "CharacterTextSplitter", "TokenTextSplitter"])
+
+with col2:
+    if splitter_type == "RecursiveCharacterTextSplitter":
+        st.info("""
+        **RecursiveCharacterTextSplitter**
+        *   Splits by a prioritized list of separators (e.g., `\\n\\n`, `\\n`, ` `, ``).
+        *   Attempts to keep paragraphs, then sentences, then words together.
+        *   Best for general text to maintain semantic context.
+        """)
+    elif splitter_type == "CharacterTextSplitter":
+        st.info("""
+        **CharacterTextSplitter**
+        *   Splits based on a single user-defined separator (default: `\\n\\n`).
+        *   Simpler and faster but might break sentences or words if not careful.
+        *   Good for strictly formatted text.
+        """)
+    elif splitter_type == "TokenTextSplitter":
+        st.info("""
+        **TokenTextSplitter**
+        *   Splits text based on token count (using `tiktoken`).
+        *   Essential for LLM context windows (e.g., GPT-4 has a token limit).
+        *   Might split words in the middle (e.g. "cheeseburger" -> "cheese", "burger").
+        """)
 chunk_size = st.sidebar.slider("Chunk Size", min_value=100, max_value=5000, value=1000, step=50)
 chunk_overlap = st.sidebar.slider("Chunk Overlap", min_value=0, max_value=1000, value=200, step=10)
 
