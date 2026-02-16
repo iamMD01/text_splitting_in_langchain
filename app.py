@@ -107,9 +107,10 @@ if st.button("Process"):
             
             st.subheader("Chunk Length Distribution")
             st.bar_chart(lengths)
+            
+        search_term = st.text_input("Search within chunks", placeholder="Type a keyword to highlight...")
         
         for i, chunk in enumerate(chunks):
-            # ... (rest of loop)
             color = colors[i % len(colors)]
             
             overlap_prev = ""
@@ -140,6 +141,17 @@ if st.button("Process"):
             # Construct display HTML
             # IMPORTANT: Escape HTML to avoid invalid characters or XSS-like issues
             
+            # Helper to escape and highlight search term
+            def process_text_segment(text):
+                escaped = html.escape(text)
+                if search_term:
+                    # Case-insensitive highlight? For now, simple case-sensitive replace
+                    # To be robust, use regex, but simple replace for demo
+                    # Highlighting style for search matches: Yellow bg
+                    highlight = f'<span style="background-color: yellow; color: black; font-weight: bold;">{html.escape(search_term)}</span>'
+                    return escaped.replace(html.escape(search_term), highlight)
+                return escaped
+
             start_len = len(overlap_prev)
             end_len = len(overlap_next)
             
@@ -148,20 +160,18 @@ if st.button("Process"):
                 part2_text = chunk[start_len : len(chunk)-end_len]
                 part3_text = chunk[len(chunk)-end_len:] if end_len > 0 else ""
                 
-                # HTML template for highlighting
-                highlight_style = 'background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;'
+                # HTML template for overlap highlighting (gray/bold/underlined)
+                overlap_style = 'background-color: rgba(255, 255, 255, 0.5); font-weight: bold; text-decoration: underline;'
                 
                 display_text = ""
                 if part1_text:
-                    display_text += f'<span style="{highlight_style}">{html.escape(part1_text)}</span>'
-                display_text += html.escape(part2_text)
+                    display_text += f'<span style="{overlap_style}">{process_text_segment(part1_text)}</span>'
+                display_text += process_text_segment(part2_text)
                 if part3_text:
-                    display_text += f'<span style="{highlight_style}">{html.escape(part3_text)}</span>'
+                    display_text += f'<span style="{overlap_style}">{process_text_segment(part3_text)}</span>'
             else:
-                # Overlap region intersects; fallback to just escaping the whole chunk
-                # or strictly prioritize start highlighting
-                # For simplicity, if complex overlap, just show escaped chunk
-                display_text = html.escape(chunk)
+                # Fallback for complex overlap
+                display_text = process_text_segment(chunk)
 
             st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{display_text}</div>', unsafe_allow_html=True)
 
