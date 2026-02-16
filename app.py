@@ -186,10 +186,6 @@ if st.session_state.chunks:
         st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{display_text}</div>', unsafe_allow_html=True)
 
 
-st.markdown('---')
-st.caption('Text Splitter Playground | Built with Streamlit & LangChain')
-
-
 st.sidebar.markdown('---')
 st.sidebar.caption('Chunk visuals are color-coded to show boundaries.')
 
