@@ -19,3 +19,5 @@ text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste 
 
 if st.button('Process'):
     st.write('Processing...')
+
+    colors = ['#FFD700', '#ADFF2F', '#00FFFF', '#FF69B4', '#FFA500']
