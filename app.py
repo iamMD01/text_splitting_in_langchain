@@ -17,7 +17,20 @@ else:
     splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
 text_input = st.text_area("Enter Text to Chunk", height=400, placeholder="Paste your text here...")
 
-if st.button('Process'):
-    st.write('Processing...')
-
-    colors = ['#FFD700', '#ADFF2F', '#00FFFF', '#FF69B4', '#FFA500']
+if st.button("Process"):
+    if not text_input:
+        st.warning("Please enter some text to process.")
+    else:
+        chunks = splitter.split_text(text_input)
+        st.write(f"Number of chunks: {len(chunks)}")
+        
+        # Stats
+        lengths = [len(c) for c in chunks]
+        if lengths:
+            avg_len = sum(lengths)/len(lengths)
+            st.info(f"Max: {max(lengths)} chars | Min: {min(lengths)} chars | Avg: {avg_len:.2f} chars")
+        
+        colors = ['#FFD700', '#ADFF2F', '#00FFFF', '#FF69B4', '#FFA500']
+        for i, chunk in enumerate(chunks):
+            color = colors[i % len(colors)]
+            st.markdown(f'<div style="background-color: {color}; padding: 10px; margin: 5px; border-radius: 5px;">{chunk}</div>', unsafe_allow_html=True)
