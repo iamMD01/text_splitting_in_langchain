@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Splitter & Chunking — Presentation</title>
+  <meta name="description" content="8th Sem AIML Project Presentation: Text Splitting & Chunking Visualizer for LLMs using LangChain & Streamlit">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="presentation">
+
+  <!-- ======== SLIDE 1: TITLE ======== -->
+  <section class="slide active" id="slide-title" data-steps="0">
+    <div class="title-icon animate">✂️</div>
+    <div class="slide-title">Text Splitter &amp; Chunking<br>Visualizer</div>
+    <div class="slide-subtitle">Unlocking the Black Box of RAG — An Interactive Tool for Understanding How LLMs Process Text</div>
+
+    <div class="appear" style="--d:1">
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="name">MD Aaftab Alam</div>
+          <div class="role">Team Lead</div>
+        </div>
+        <div class="team-member">
+          <div class="name">Shivam Sahu</div>
+          <div class="role">Member</div>
+        </div>
+        <div class="team-member">
+          <div class="name">Aditya Baxi</div>
+          <div class="role">Member</div>
+        </div>
+        <div class="team-member">
+          <div class="name">Harshita Gupta</div>
+          <div class="role">Member</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="college-info appear" style="--d:2">
+      <strong>Shri Shankaracharya Institute of Professional Management &amp; Technology</strong><br>
+      8th Semester — B.Tech AIML<br>
+      Guide: <strong>Dr. RPS Chauhan</strong>
+    </div>
+  </section>
+
+  <!-- ======== SLIDE 2: THE PROBLEM ======== -->
+  <section class="slide" id="slide-problem" data-steps="0">
+    <div class="slide-tag">The Problem</div>
+    <div class="slide-title" style="font-size:clamp(28px,4vw,52px);">LLMs Have a Memory Limit</div>
+    <div class="slide-subtitle">Large Language Models can only read a fixed amount of text at once. This is called the <strong>Context Window</strong>.</div>
+
+    <div class="problem-grid appear" style="--d:1">
+      <div class="problem-card">
+        <div class="icon">🧠</div>
+        <h3>Context Window</h3>
+        <p>Models like GPT-4 can only process 8K–128K tokens at a time. Your document might be 500K+ tokens.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">🕳️</div>
+        <h3>Lost in the Middle</h3>
+        <p>Even if text fits, LLMs lose track of information buried in the middle of long documents.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">💸</div>
+        <h3>Wasted Cost</h3>
+        <p>Sending unnecessary tokens to the API wastes money. Processing only relevant chunks saves cost.</p>
+      </div>
+    </div>
+
+    <div class="appear" style="--d:2">
+      <div class="problem-grid" style="margin-top:16px;">
+        <div class="problem-card" style="grid-column: 1 / -1; border-color: var(--gray-300);">
+          <div class="icon">🤖</div>
+          <h3>Hallucinations</h3>
+          <p>When overwhelmed with irrelevant text, models make up answers — they "hallucinate" incorrect facts.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="solution-banner appear" style="--d:3">
+      ✂️ &nbsp;Solution: Intelligent Text Splitting
+    </div>
+  </section>
+
+  <!-- ======== SLIDE 3: HOW IT WORKS (ANIMATED) ======== -->
+  <section class="slide manual-steps" id="slide-how-it-works" data-steps="6">
+    <div class="slide-tag">How It Works</div>
+    <div class="slide-title" style="font-size:clamp(24px,3.5vw,42px); margin-bottom:20px;">Text Splitting in Action</div>
+
+    <div class="works-container">
+      <div class="original-text-block" id="original-text" data-step="1">
+        <div class="scan-line"></div>
+        LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also be data-aware: connect a language model to other sources of data. Be agentic: allow a language model to interact with its environment. The LangChain framework is designed with the objective in mind to enable those types of applications. As such, we provide a comprehensive set of tools, components, and interfaces that make it easy to build powerful applications.
+      </div>
+
+      <div class="params-display" data-step="2">
+        <div class="param-badge"><span>chunk_size = </span>500</div>
+        <div class="param-badge"><span>chunk_overlap = </span>50</div>
+        <div class="param-badge"><span>splitter = </span>RecursiveCharacterTextSplitter</div>
+      </div>
+
+      <div data-step="3" style="text-align:center;">
+        <div style="font-family:var(--font-mono); font-size:14px; color:var(--gray-500); margin-bottom:4px;">Separator Priority:</div>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; align-items:center;">
+          <span class="param-badge" style="border-color:var(--white);">\\n\\n</span>
+          <svg class="inline-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+          <span class="param-badge">\\n</span>
+          <svg class="inline-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+          <span class="param-badge">" "</span>
+          <svg class="inline-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+          <span class="param-badge">""</span>
+        </div>
+      </div>
+
+      <div class="chunks-result" data-step="4">
+        <div class="chunk-box chunk-blue">
+          <span class="chunk-label">Chunk 1</span>
+          <span class="token-count">42 tokens</span>
+          <span class="chunk-main-text">LangChain is a framework for developing applications powered by language models. We believe that the most powerful and differentiated applications will not only call out to a language model via an API, but will also be</span> <span class="overlap-text">data-aware: connect a language model</span>
+        </div>
+        <div class="overlap-marker">⟷ 50 character overlap region</div>
+        <div class="chunk-box chunk-green">
+          <span class="chunk-label">Chunk 2</span>
+          <span class="token-count">48 tokens</span>
+          <span class="overlap-text">data-aware: connect a language model</span> <span class="chunk-main-text">to other sources of data. Be agentic: allow a language model to interact with its environment. The LangChain framework is designed with the objective in mind to enable</span> <span class="overlap-text">those types of applications.</span>
+        </div>
+        <div class="overlap-marker">⟷ 50 character overlap region</div>
+        <div class="chunk-box chunk-amber">
+          <span class="chunk-label">Chunk 3</span>
+          <span class="token-count">35 tokens</span>
+          <span class="overlap-text">those types of applications.</span> <span class="chunk-main-text">As such, we provide a comprehensive set of tools, components, and interfaces that make it easy to build powerful applications.</span>
+        </div>
+      </div>
+
+      <div data-step="5" style="text-align:center; font-size:15px; color:var(--gray-300); max-width:700px;">
+        <span style="color:var(--overlap-color); font-weight:600;">Orange text</span> = overlap regions — the same text appears in adjacent chunks, ensuring no information is lost at boundaries
+      </div>
+
+      <div data-step="6" style="text-align:center;">
+        <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+          <div class="param-badge" style="border-color:var(--white);"><span>Total Chunks: </span>3</div>
+          <div class="param-badge" style="border-color:var(--chunk-1);"><span>Chunk 1: </span>42 tok</div>
+          <div class="param-badge" style="border-color:var(--chunk-2);"><span>Chunk 2: </span>48 tok</div>
+          <div class="param-badge" style="border-color:var(--chunk-3);"><span>Chunk 3: </span>35 tok</div>
+          <div class="param-badge" style="border-color:var(--white);"><span>Total: </span>125 tokens</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SLIDE 4: RAG PIPELINE ======== -->
+  <section class="slide" id="slide-pipeline" data-steps="0">
+    <div class="slide-tag">The Complete Pipeline</div>
+    <div class="slide-title" style="font-size:clamp(24px,3.5vw,42px); margin-bottom:32px;">How RAG Uses Text Splitting</div>
+
+    <div class="pipeline-row appear" style="--d:1">
+      <div class="pipeline-node">
+        <div class="node-icon">📄</div>
+        <div class="node-label">Document</div>
+        <div class="node-detail">PDF / Text</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">✂️</div>
+        <div class="node-label">Text Splitter</div>
+        <div class="node-detail">LangChain</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">📦</div>
+        <div class="node-label">Chunks</div>
+        <div class="node-detail">Sized pieces</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">🔢</div>
+        <div class="node-label">Embeddings</div>
+        <div class="node-detail">Vectors</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">🗄️</div>
+        <div class="node-label">Vector DB</div>
+        <div class="node-detail">FAISS / Chroma</div>
+      </div>
+    </div>
+
+    <div class="pipeline-connector appear" style="--d:2">↕</div>
+
+    <div class="pipeline-row appear" style="--d:3">
+      <div class="pipeline-node" style="border-color:var(--gray-300);">
+        <div class="node-icon">❓</div>
+        <div class="node-label">User Query</div>
+        <div class="node-detail">"What is LangChain?"</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">🔍</div>
+        <div class="node-label">Retrieve</div>
+        <div class="node-detail">Top-K Chunks</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node">
+        <div class="node-icon">🤖</div>
+        <div class="node-label">LLM</div>
+        <div class="node-detail">GPT-4 / Claude</div>
+      </div>
+      <div class="pipeline-arrow"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg></div>
+      <div class="pipeline-node" style="border-color:var(--gray-300);">
+        <div class="node-icon">💡</div>
+        <div class="node-label">Answer</div>
+        <div class="node-detail">Grounded response</div>
+      </div>
+    </div>
+
+    <div class="appear" style="--d:4; margin-top:24px; text-align:center; max-width:700px;">
+      <p style="font-size:16px; color:var(--gray-300); line-height:1.7;">
+        Our <strong style="color:var(--white);">Text Splitter Visualizer</strong> focuses on the critical first step — letting you see, tune, and debug how your documents get chunked before entering this pipeline.
+      </p>
+    </div>
+  </section>
+
+  <!-- ======== SLIDE 5: FEATURES & TECH STACK ======== -->
+  <section class="slide" id="slide-features" data-steps="0">
+    <div class="slide-tag">What We Built</div>
+    <div class="slide-title" style="font-size:clamp(24px,3.5vw,42px); margin-bottom:8px;">Features &amp; Tech Stack</div>
+
+    <div class="features-grid">
+      <div class="appear" style="--d:1">
+        <div class="section-label">Features</div>
+        <ul class="feature-list">
+          <li><span class="feat-icon">🔄</span> <span>Switch between Recursive, Character &amp; Token splitters instantly</span></li>
+          <li><span class="feat-icon">🎨</span> <span>Color-coded chunks with real-time visualization</span></li>
+          <li><span class="feat-icon">🔗</span> <span>Overlap highlighting — see exactly where chunks connect</span></li>
+          <li><span class="feat-icon">🔢</span> <span>Live token counting with min/max/avg statistics</span></li>
+          <li><span class="feat-icon">📄</span> <span>PDF upload support for real-world documents</span></li>
+          <li><span class="feat-icon">🔍</span> <span>Search &amp; highlight keywords across all chunks</span></li>
+        </ul>
+      </div>
+
+      <div class="appear" style="--d:2">
+        <div class="section-label">Tech Stack</div>
+        <ul class="tech-stack-list">
+          <li><div class="tech-icon">🐍</div><div><div class="tech-name">Python</div><div class="tech-desc">Core language</div></div></li>
+          <li><div class="tech-icon">⚡</div><div><div class="tech-name">Streamlit</div><div class="tech-desc">Interactive web UI framework</div></div></li>
+          <li><div class="tech-icon">🦜</div><div><div class="tech-name">LangChain</div><div class="tech-desc">Text splitter algorithms</div></div></li>
+          <li><div class="tech-icon">🔤</div><div><div class="tech-name">Tiktoken</div><div class="tech-desc">OpenAI BPE tokenizer</div></div></li>
+          <li><div class="tech-icon">📑</div><div><div class="tech-name">PyPDF</div><div class="tech-desc">PDF text extraction</div></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== SLIDE 6: THANK YOU ======== -->
+  <section class="slide" id="slide-thankyou" data-steps="0">
+    <div class="slide-title">Thank You</div>
+    <div class="slide-subtitle">We appreciate your time and attention.</div>
+
+    <div class="appear" style="--d:1">
+      <a href="https://tsacwl.streamlit.app/" target="_blank" class="launch-btn">
+        Launch Live Demo
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+      </a>
+
+      <div class="thankyou-footer">
+        MD Aaftab Alam &nbsp;·&nbsp; Shivam Sahu &nbsp;·&nbsp; Aditya Baxi &nbsp;·&nbsp; Harshita Gupta<br>
+        Shri Shankaracharya Institute of Professional Management &amp; Technology<br>
+        Guide: Dr. RPS Chauhan &nbsp;|&nbsp; 8th Semester AIML
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+  <button class="nav-dot active" aria-label="Slide 1"></button>
+  <button class="nav-dot" aria-label="Slide 2"></button>
+  <button class="nav-dot" aria-label="Slide 3"></button>
+  <button class="nav-dot" aria-label="Slide 4"></button>
+  <button class="nav-dot" aria-label="Slide 5"></button>
+  <button class="nav-dot" aria-label="Slide 6"></button>
+</div>
+
+<div class="slide-counter" id="slide-counter">1 / 6</div>
+
+<div class="nav-arrows left">
+  <button class="nav-arrow-btn" id="btn-prev" aria-label="Previous">
+    <svg width="24" height="24" viewBox="0 0 20 20" fill="none" style="transform:rotate(180deg)"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+  </button>
+</div>
+<div class="nav-arrows right">
+  <button class="nav-arrow-btn" id="btn-next" aria-label="Next">
+    <svg width="24" height="24" viewBox="0 0 20 20" fill="none"><path d="M10.141 4.82C10.495 4.426 11.105 4.39 11.503 4.74L16.676 9.287C16.882 9.468 17 9.728 17 10s-.118.532-.324.713l-5.173 4.546c-.398.35-1.008.315-1.362-.079-.354-.394-.318-.997.08-1.347L13.497 10.954H3.965C3.432 10.954 3 10.527 3 10s.432-.954.965-.954h9.532L10.221 6.167c-.398-.35-.434-.953-.08-1.347z" fill="currentColor"/></svg>
+  </button>
+</div>
+
+<div class="key-hint">
+  <kbd>←</kbd> <kbd>→</kbd> navigate &nbsp;·&nbsp; <kbd>F</kbd> fullscreen
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

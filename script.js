@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentStep = 0;
   let isTransitioning = false;
 
+  function isManual(slide) {
+    return slide.classList.contains('manual-steps');
+  }
+
   function getMaxSteps(slide) {
     return parseInt(slide.dataset.steps || '0');
   }
@@ -14,9 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     slide.querySelectorAll(`[data-step="${step}"]`).forEach(el => {
       el.classList.add('visible');
     });
-    // Trigger special animations
     if (slide.id === 'slide-how-it-works') {
       if (step === 3) triggerScanLine();
+      if (step === 4) triggerChunksAnimation();
       if (step === 5) showOverlaps();
       if (step === 6) showTokenCounts();
     }
@@ -26,11 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
     slide.querySelectorAll('[data-step]').forEach(el => {
       el.classList.remove('visible');
     });
-    // Reset special animations
     const scanLine = slide.querySelector('.scan-line');
     if (scanLine) scanLine.classList.remove('animate');
     slide.querySelectorAll('.overlap-marker').forEach(m => m.classList.remove('show'));
     slide.querySelectorAll('.token-count').forEach(t => t.classList.remove('show'));
+    const originalText = slide.querySelector('.original-text-block');
+    if (originalText) originalText.classList.remove('fade-out');
+    const chunksResult = slide.querySelector('.chunks-result');
+    if (chunksResult) chunksResult.classList.remove('visible');
   }
 
   function goToSlide(index) {
@@ -39,15 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const prev = slides[currentSlide];
     const next = slides[index];
-
-    // Hide all steps on the slide we're leaving
-    hideAllSteps(prev);
-
-    // Determine direction
     const direction = index > currentSlide ? 1 : -1;
 
+    hideAllSteps(prev);
+
     prev.classList.remove('active');
-    prev.classList.add(direction > 0 ? 'exit-left' : '');
     prev.style.transform = direction > 0 ? 'translateX(-60px)' : 'translateX(60px)';
     prev.style.opacity = '0';
 
@@ -70,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSlide = index;
     currentStep = 0;
 
-    // Update nav
     dots.forEach((d, i) => d.classList.toggle('active', i === index));
     counter.textContent = `${index + 1} / ${slides.length}`;
 
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const slide = slides[currentSlide];
     const maxSteps = getMaxSteps(slide);
 
-    if (currentStep < maxSteps) {
+    if (isManual(slide) && currentStep < maxSteps) {
       currentStep++;
       showStep(slide, currentStep);
     } else if (currentSlide < slides.length - 1) {
@@ -90,51 +92,71 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function retreat() {
-    if (currentStep > 0) {
-      // Hide current step
-      const slide = slides[currentSlide];
+    const slide = slides[currentSlide];
+
+    if (isManual(slide) && currentStep > 0) {
       slide.querySelectorAll(`[data-step="${currentStep}"]`).forEach(el => {
         el.classList.remove('visible');
       });
+      // Reset special states when stepping back
+      if (currentStep === 4) {
+        const chunksResult = slide.querySelector('.chunks-result');
+        if (chunksResult) chunksResult.classList.remove('visible');
+      }
+      if (currentStep === 3) {
+        const originalText = slide.querySelector('.original-text-block');
+        if (originalText) originalText.classList.remove('fade-out');
+        const scanLine = slide.querySelector('.scan-line');
+        if (scanLine) scanLine.classList.remove('animate');
+      }
       currentStep--;
     } else if (currentSlide > 0) {
-      goToSlide(currentSlide - 1);
-      // Show all steps of previous slide
-      const prevSlide = slides[currentSlide];
-      const max = getMaxSteps(prevSlide);
-      for (let i = 1; i <= max; i++) {
-        showStep(prevSlide, i);
+      const targetIndex = currentSlide - 1;
+      goToSlide(targetIndex);
+      // If going back to a manual slide, show all its steps
+      const targetSlide = slides[targetIndex];
+      if (isManual(targetSlide)) {
+        const max = getMaxSteps(targetSlide);
+        for (let i = 1; i <= max; i++) {
+          showStep(targetSlide, i);
+        }
+        currentStep = max;
       }
-      currentStep = max;
     }
   }
 
   // Special animation triggers
   function triggerScanLine() {
     const scanLine = document.querySelector('.scan-line');
+    const originalText = document.getElementById('original-text');
     if (scanLine) {
       scanLine.classList.remove('animate');
-      void scanLine.offsetWidth; // force reflow
+      void scanLine.offsetWidth;
       scanLine.classList.add('animate');
+    }
+    if (originalText) {
+      setTimeout(() => originalText.classList.add('fade-out'), 1800);
     }
   }
 
   function showOverlaps() {
     document.querySelectorAll('.overlap-marker').forEach((m, i) => {
-      setTimeout(() => m.classList.add('show'), i * 200);
-    });
-    document.querySelectorAll('.overlap-text').forEach(t => {
-      t.style.color = 'var(--white)';
+      setTimeout(() => m.classList.add('show'), i * 300);
     });
   }
 
   function showTokenCounts() {
     document.querySelectorAll('.token-count').forEach((t, i) => {
-      setTimeout(() => t.classList.add('show'), i * 150);
+      setTimeout(() => t.classList.add('show'), i * 200);
     });
   }
 
-  // Keyboard navigation
+  function triggerChunksAnimation() {
+    const chunksResult = document.querySelector('.chunks-result');
+    if (chunksResult) chunksResult.classList.add('visible');
+  }
+
+  // Keyboard
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
@@ -151,16 +173,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Click navigation
-  document.querySelector('.nav-arrow-btn.left')?.addEventListener('click', retreat);
-  document.querySelector('.nav-arrow-btn.right')?.addEventListener('click', advance);
+  // Button clicks (using IDs now)
+  document.getElementById('btn-prev')?.addEventListener('click', retreat);
+  document.getElementById('btn-next')?.addEventListener('click', advance);
 
   // Dot navigation
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => goToSlide(i));
   });
 
-  // Touch support
+  // Touch
   let touchStartX = 0;
   document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
   document.addEventListener('touchend', (e) => {
@@ -170,6 +192,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initialize first slide
   counter.textContent = `1 / ${slides.length}`;
 });
