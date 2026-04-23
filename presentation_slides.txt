@@ -1,0 +1,120 @@
+# Presentation: Mastering Text Splitting & Chunking for LLMs
+Subtitle: A Deep Dive into RAG Pre-processing with LangChain & Streamlit
+
+---
+
+## Slide 1: Title Slide
+Title: Text Splitting Visualizer: Unlocking the Black Box of RAG
+Subtitle: Understanding How Large Language Models Process Text
+Presented By: [Your Name / Team Name]
+Date: [Current Date]
+
+---
+
+## Slide 2: Introduction (Setting the Stage)
+Headline: The Era of Generative AI & RAG
+*   The Rise of LLMs: Tools like ChatGPT and Claude have revolutionized how we interact with information.
+*   The Constraint: LLMs are trained on general knowledge, not *your* private data.
+*   Enter RAG (Retrieval-Augmented Generation): The technique of connecting an LLM to your own documents (PDFs, Wikis, Databases) so it can answer specific questions.
+*   The Crucial Step: Before an LLM can read your data, that data must be prepared. This is where Text Splitting comes in.
+
+---
+
+## Slide 3: The Problem (Why Chunking Matters)
+Headline: LLMs Have a Limit
+*   The Context Window: Models cannot read an infinite amount of text at once. They have a limit (e.g., 8k, 128k tokens).
+*   The Garbage In, Garbage Out Rule: Feeding massive, unstructured documents leads to:
+    *   Lost Information: The "Lost in the Middle" phenomenon.
+    *   High Costs: Paying for unnecessary tokens.
+    *   Hallucinations: The model making things up when overwhelmed.
+*   The Solution: We need a way to break documents down intelligently.
+
+---
+
+## Slide 4: What is Text Splitting?
+Headline: It's Not Just Cutting Strings
+*   Definition: The process of dividing a large document into smaller, semantically meaningful units called "Chunks".
+*   The Goal: To fit these chunks into an LLM's context window while preserving the meaning of the text.
+*   The Challenge: Where do you cut?
+    *   Cut in the middle of a sentence? -> Meaning lost.
+    *   Cut between paragraphs? -> Better.
+    *   Cut based on token count? -> Essential for API constraints.
+
+---
+
+## Slide 5: Key Concepts
+Headline: The Anatomy of a Chunk
+1.  Chunk Size:
+    *   The maximum size of a single piece of text (e.g., 1000 characters).
+    *   Trade-off: Too small = no context. Too big = hard to find specific answers.
+2.  Chunk Overlap:
+    *   The amount of text shared between the end of one chunk and the start of the next (e.g., 200 characters).
+    *   Why? To ensuring that a sentence cut in half is fully preserved in at least one chunk.
+3.  Separators:
+    *   The logic used to split text (Newlines `\n\n`, Periods `.`, Spaces ` `, etc.).
+
+---
+
+## Slide 6: Introducing Our Solution
+Headline: The Text Splitter Visualizer
+*   What we built: An interactive web application built with Streamlit and LangChain.
+*   Purpose: To help developers and researchers see how different splitting strategies affect their data in real-time.
+*   Tech Stack:
+    *   Python: The core language.
+    *   Streamlit: For the interactive UI.
+    *   LangChain: For the splitting algorithms.
+    *   Tiktoken: For accurate token counting.
+
+---
+
+## Slide 7: Feature Breakdown (The "Wow" Factors)
+Headline: More Than Just a Text Box
+1.  Multiple Algorithms: Switch between Recursive, Character, and Token splitters instantly.
+2.  Real-Time Visualization: Chunks are color-coded to visually distinguish boundaries.
+3.  Overlap Highlighting: We visually highlight exactly where the overlap occurs.
+4.  Token Counting: Live stats on token usage (critical for cost estimation).
+5.  PDF Support: Handles real-world documents, not just pasted text.
+
+---
+
+## Slide 8: Implementation Deep Dive
+Headline: Under the Hood
+*   State Management: Utilized `st.session_state` to decouple processing from interaction.
+*   Security: Implemented HTML escaping (`html.escape`) to prevent injection attacks when rendering user content.
+*   Dynamic Layout: Used `st.columns` and `st.expander` to create a clean, information-dense interface.
+
+---
+
+## Slide 9: Live Demo Script
+Headline: Let's See It In Action!
+*(Switch to the live app at localhost:8501)*
+*   Scenario 1: Paste a complex article. Show how RecursiveCharacterTextSplitter respects paragraphs vs. CharacterTextSplitter.
+*   Scenario 2: Adjust the "Chunk Size" slider and watch the bar chart update instantly.
+*   Scenario 3: Type a keyword in the "Search" box to find it across multiple chunks.
+
+---
+
+## Slide 10: Future Roadmap
+Headline: What's Next?
+1.  Export Functionality: Download chunked JSON datasets for training.
+2.  Semantic Similarity: Use embeddings to visualize how "close" two chunks are in meaning.
+3.  RAG Preview: Connect to a vector database (like Chroma or FAISS) to simulate a retrieval step.
+
+---
+
+## Slide 11: References & Resources
+Headline: Learn More
+*   LangChain Documentation: `python.langchain.com`
+*   Streamlit Documentation: `docs.streamlit.io`
+*   Tiktoken (OpenAI): `github.com/openai/tiktoken`
+*   Research: Liu et al. (2023) - "Lost in the Middle: How Language Models Use Long Contexts"
+
+---
+
+## Slide 12: Q&A
+Headline: Thank You!
+*   Code Repository: [Link to your GitHub]
+*   Questions?
+
+---
+*Created with the help of Antigravity Agent*
